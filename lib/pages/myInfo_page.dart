@@ -73,7 +73,7 @@ class _MyInfoPageState extends State<MyInfoPage> with WidgetsBindingObserver{
           if (isLogin) {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) {
-                  return CollectListPage();
+                  return CollectPage();
                 }
             ));
           } else {

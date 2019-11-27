@@ -3,6 +3,8 @@ import 'package:flutter_demo/http/api.dart';
 import 'package:flutter_demo/http/http_util.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_demo/util/StringUtils.dart';
+import 'package:flutter_demo/util/DataUtils.dart';
+import 'package:flutter_demo/pages/login_page.dart';
 
 class ArticleItem extends StatefulWidget {
   var itemData;
@@ -30,7 +32,19 @@ class ArticleItem extends StatefulWidget {
 class _ArticleItemState extends State<ArticleItem> {
 
   void _handleOnItemCollect(itemData) {
-    _itemCollect(itemData);
+    DataUtils.isLogin().then((isLogin) {
+      if (!isLogin) {
+        _login();
+      } else {
+        _itemCollect(itemData);
+      }
+    });
+  }
+
+  _login() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return LoginPage();
+    }));
   }
 
 
@@ -107,15 +121,15 @@ class _ArticleItemState extends State<ArticleItem> {
             textAlign: TextAlign.left,
           ),
         ),
-//        IconButton(
-//          icon: Icon(
-//            isCollect ? Icons.favorite : Icons.favorite_border,
-//            color: isCollect ? Colors.red : null
-//          ),
-//          onPressed: () {
-//            _handleOnItemCollect(widget.itemData);
-//          },
-//        )
+        IconButton(
+          icon: Icon(
+            isCollect ? Icons.favorite : Icons.favorite_border,
+            color: isCollect ? Colors.red : null
+          ),
+          onPressed: () {
+            _handleOnItemCollect(widget.itemData);
+          },
+        )
       ],
     );
 

@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
-
 import 'dart:convert';
-
 import 'package:flutter_demo/http/api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /*数据接口类型errorCode>0是接口请求成功
 {
@@ -17,7 +16,7 @@ import 'package:flutter_demo/http/api.dart';
 //  static const String BaseUrl = "http://www.wanandroid.com/";
 //}
 
-//这里只封装了常见的get和post请求类型,不带Cookie
+//这里只封装了常见的get和post请求类型
 class HttpUtil {
   static const String GET = "get";
   static const String POST = "post";
@@ -71,6 +70,13 @@ class HttpUtil {
       Map<String, String> headerMap = headers == null ? new Map() : headers;
       Map<String, String> paramMap = params == null ? new Map() : params;
 
+      //统一添加cookie(写在这是不是也有些不优雅)
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      String cookie = sp.get("cookie");
+      if(cookie==null || cookie.length==0){
+      }else{
+        headerMap['Cookie'] = cookie;
+      }
 
       http.Response res;
       if (POST == method) {
@@ -96,6 +102,12 @@ class HttpUtil {
       errorCode = map['errorCode'];
       errorMsg = map['errorMsg'];
       data = map['data'];
+
+      //报存登录接口的cookie,写在这里有些不优雅(0-0)
+      if(url.contains(Api.LOGIN)){
+        SharedPreferences sp = await SharedPreferences.getInstance();
+        sp.setString("cookie", res.headers['set-cookie']);
+      }
 
 
       // callback返回data,数据类型为dynamic
